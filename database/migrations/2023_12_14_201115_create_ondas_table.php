@@ -10,7 +10,7 @@ class CreateOndasTable extends Migration
     {
         Schema::create('ondas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bateria_id');
+            $table->unsignedBigInteger('bateria_id'); // Mudança aqui para refletir a relação com a tabela 'baterias'
             $table->unsignedBigInteger('surfista_id');
             $table->foreign('bateria_id')->references('id')->on('baterias');
             $table->foreign('surfista_id')->references('numero')->on('surfistas');
