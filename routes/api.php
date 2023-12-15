@@ -23,6 +23,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('baterias', BateriaController::class);
     Route::apiResource('ondas', OndaController::class);
     Route::apiResource('notas', NotaController::class);
+    Route::get('baterias/{bateria}/vencedor', [BateriaController::class, 'getVencedor']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

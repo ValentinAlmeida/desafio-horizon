@@ -22,6 +22,6 @@ class Nota extends Model
 
     public function onda()
     {
-        return $this->belongsTo(Onda::class, 'Onda', 'id');
+        return $this->belongsTo(Onda::class, 'onda_id', 'id');
     }
 }

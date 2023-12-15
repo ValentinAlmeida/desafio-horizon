@@ -14,22 +14,22 @@ class Bateria extends Model
 
     protected $fillable = [
         'id',
-        'Surfista1',
-        'Surfista2',
+        'surfista1',
+        'surfista2',
     ];
 
     public function surfista1()
     {
-        return $this->belongsTo(Surfista::class, 'Surfista1', 'numero');
+        return $this->belongsTo(Surfista::class, 'surfista1', 'numero');
     }
 
     public function surfista2()
     {
-        return $this->belongsTo(Surfista::class, 'Surfista2', 'numero');
+        return $this->belongsTo(Surfista::class, 'surfista2', 'numero');
     }
 
     public function ondas()
     {
-        return $this->hasMany(Onda::class, 'Bateria', 'id');
+        return $this->hasMany(Onda::class, 'bateria_id', 'id');
     }
 }

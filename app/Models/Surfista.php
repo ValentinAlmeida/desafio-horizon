@@ -22,12 +22,12 @@ class Surfista extends Model
 
     public function baterias()
     {
-        return $this->hasMany(Bateria::class, 'Surfista1', 'numero')
-                    ->orWhere('Surfista2', $this->numero);
+        return $this->hasMany(Bateria::class, 'surfista1', 'numero')
+                    ->orWhere('surfista2', $this->numero);
     }
 
     public function ondas()
     {
-        return $this->hasMany(Onda::class, 'Surfista', 'numero');
+        return $this->hasMany(Onda::class, 'surfista_id', 'numero');
     }
 }

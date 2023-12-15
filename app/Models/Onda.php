@@ -20,16 +20,16 @@ class Onda extends Model
 
     public function bateria()
     {
-        return $this->belongsTo(Bateria::class, 'Bateria', 'id');
+        return $this->belongsTo(Bateria::class, 'bateria_id', 'id');
     }
 
     public function surfista()
     {
-        return $this->belongsTo(Surfista::class, 'Surfista', 'numero');
+        return $this->belongsTo(Surfista::class, 'surfista_id', 'numero');
     }
 
     public function nota()
     {
-        return $this->hasOne(Nota::class, 'Onda', 'id');
+        return $this->hasOne(Nota::class, 'onda_id', 'id');
     }
 }
