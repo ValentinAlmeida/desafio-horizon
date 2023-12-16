@@ -51,6 +51,7 @@ Para instalar o desafio, siga estas etapas:
     - Finaliza com o Seed.
 
 > Lembre que se for instalar no windows para rodar o make é recomendado usar o mingw32, instalado com o msys2(baixe no site oficial), abrindo o programa e rodando o:
+
         ```bash
     pacman -Syu
     pacman -Su
