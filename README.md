@@ -96,15 +96,11 @@ Para instalar o desafio, siga estas etapas:
 
 4.1. Crie o .env: (Linux)
 
-    ```bash
     cp .env.example .env
-    ```
 
 4.2. Crie o .env: (Windows)
 
-     ```bash
-    copy .env.example .env
-    ```   
+    copy .env.example .env  
 
 5. Gere a key do artisan:
 
@@ -130,5 +126,172 @@ Para instalar o desafio, siga estas etapas:
     docker-compose exec app php artisan db:seed
     ```   
 
-### Contribuidor
-| [<img src="https://avatars.githubusercontent.com/u/85695651?s=400&u=d9da951fa99581e5dfbd44e3fb4f847451efcfbb&v=4"><br><sub>Valentin Almeida</sub>](https://github.com/ValentinAlmeida) |:-:|
+## 💻 Requisições da api com json prontas para teste
+
+1. Surfistas:
+
+```bash
+    {
+        "numero": 1,
+        "nome": "Rani Lima",
+        "pais": "Brasil"
+    }
+    {
+        "numero": 2,
+        "nome": "Vitor Goes",
+        "pais": "Brasil"
+    }
+    {
+        "numero": 3,
+        "nome": "Jadson Santos",
+        "pais": "Brasil"
+    }
+    {
+        "numero": 4,
+        "nome": "Jean Victor",
+        "pais": "Brasil"
+    }
+```
+
+    Url: http://localhost:8000/api/v1/surfistas 
+        Metodo: Post
+
+2. Bateria:
+```bash
+    {
+    "id": 1,
+    "surfista1": 1,
+    "surfista2": 2
+    }
+    {
+    "id": 2,
+    "surfista1": 3,
+    "surfista2": 4
+    }
+    {
+    "id": 3,
+    "surfista1": 1,
+    "surfista2": 3
+    }
+    {
+    "id": 4,
+    "surfista1": 2,
+    "surfista2": 4
+    }
+```
+
+    Url: http://localhost:8000/api/v1/baterias 
+        Metodo: Post
+
+3. Ondas:
+```bash
+    {
+    "id": 1,
+    "bateria_id": 1,
+    "surfista_id": 1
+    }
+    {
+    "id": 2,
+    "bateria_id": 1,
+    "surfista_id": 2
+    }
+    {
+    "id": 3,
+    "bateria_id": 2,
+    "surfista_id": 3
+    }
+    {
+    "id": 4,
+    "bateria_id": 2,
+    "surfista_id": 4
+    }
+    {
+    "id": 5,
+    "bateria_id": 3,
+    "surfista_id": 1
+    }
+    {
+    "id": 6,
+    "bateria_id": 3,
+    "surfista_id": 3
+    }
+    {
+    "id": 7,
+    "bateria_id": 4,
+    "surfista_id": 2
+    }
+    {
+    "id": 8,
+    "bateria_id": 3,
+    "surfista_id": 4
+    }
+```
+
+    Url: http://localhost:8000/api/v1/ondas 
+        Metodo: Post
+
+4. Notas:
+
+```bash
+    {
+    "id": 1,
+    "onda_id": 1,
+    "notaParcial1": 10,
+    "notaParcial2": 9.8,
+    "notaParcial3": 9.2
+    }
+    {
+    "id": 2,
+    "onda_id": 2,
+    "notaParcial1": 7,
+    "notaParcial2": 7.8,
+    "notaParcial3": 7.2
+    }
+    {
+    "id": 3,
+    "onda_id": 3,
+    "notaParcial1": 3,
+    "notaParcial2": 2.8,
+    "notaParcial3": 5.2
+    }
+    {
+    "id": 4,
+    "onda_id": 4,
+    "notaParcial1": 7,
+    "notaParcial2": 6.8,
+    "notaParcial3": 8.2
+    }
+    {
+    "id": 5,
+    "onda_id": 5,
+    "notaParcial1": 9,
+    "notaParcial2": 9.8,
+    "notaParcial3": 9.2
+    }
+    {
+    "id": 6,
+    "onda_id": 6,
+    "notaParcial1": 5,
+    "notaParcial2": 2.8,
+    "notaParcial3": 5.2
+    }
+    {
+    "id": 7,
+    "onda_id": 7,
+    "notaParcial1": 10,
+    "notaParcial2": 8.8,
+    "notaParcial3": 9.2
+    }
+    {
+    "id": 8,
+    "onda_id": 8,
+    "notaParcial1": 1,
+    "notaParcial2": 2,
+    "notaParcial3": 4.3
+    }
+```
+
+    Url: http://localhost:8000/api/v1/notas 
+        Metodo: Post
+
+Url para obter o vencedor http://localhost:8000/api/v1/baterias/{id}/vencedor
