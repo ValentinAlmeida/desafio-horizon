@@ -70,6 +70,7 @@ Agora, o projeto está instalado e configurado. Você pode iniciar os containers
 
 ```bash
 make install
+```
 
 ## 🚀 Instalando o Desafio sem make
 
