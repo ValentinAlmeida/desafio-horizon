@@ -1,66 +1,132 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Horizon](https://img.shields.io/badge/Horizon-yellow?style=for-the-badge)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Desafio Horizon Inovação e Tecnologia
 
-## About Laravel
+![version](https://img.shields.io/badge/version-1.0-blue.svg?longCache=true&style=flat-square)
+![license](https://img.shields.io/badge/license-MIT-green.svg?longCache=true&style=flat-square)
+![contributors](https://img.shields.io/badge/Contributors-1-brightgreen?style=flat-square)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+![logo](https://d2bxzineatl84k.cloudfront.net/storage/files/logos/PyioC4SYIClCgM1q2xFHVtTcrOF0uCGh4V0YUwYW.png)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+>Este projeto consiste em desenvolver uma aplicação web para gerenciar competições de surf, seguindo as especificações fornecidas. A aplicação será construída utilizando o framework Laravel na sua versão mais recente, e o banco de dados escolhido pode ser PostgreSQL, MongoDB ou qualquer outro, seja SQL ou NoSQL.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 💻 Pré-requisitos
 
-## Learning Laravel
+Antes de começar, verifique se você atendeu algumas informações do projeto:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* Laravel Framework 9.52.16
+* PHP 8.0.30 (cli)
+* Composer version 2.6.6
+* Docker version 24.0.7
+* Docker Compose version v2.23.3
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🚀 Instalando o Desafio com make
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Para instalar o desafio, siga estas etapas:
 
-## Laravel Sponsors
+1. Clone o repositório:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+    ```bash
+    git clone https://github.com/ValentinAlmeida/desafio-horizon.git
+    ```
 
-### Premium Partners
+2. Acesse o diretório do projeto:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+    ```bash
+    cd desafio-horizon
+    ```
 
-## Contributing
+3. Instale as dependências e configure o ambiente:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ```bash
+    make install
+    ```
 
-## Code of Conduct
+    Isso realizará as seguintes etapas automaticamente:
+    - Instalar dependências do Composer.
+    - Copiar o arquivo de ambiente de exemplo e gerar uma chave de aplicativo para o Laravel.
+    - Iniciar o banco de dados com as Migrates.
+    - Finaliza com o Seed.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+> Lembre que se for instalar no windows para rodar o make é recomendado usar o mingw32, instalado com o msys2(baixe no site oficial), abrindo o programa e rodando o:
+        ```bash
+    pacman -Syu
+    pacman -Su
+    pacman -S mingw-w64-x86_64-toolchain
+    export PATH=$PATH:/c/msys64/mingw64/bin
+    mingw32-make install
+    ```
 
-## Security Vulnerabilities
+4. Se precisar iniciar os containers Docker:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```bash
+    make up
+    ```
 
-## License
+Agora, o projeto está instalado e configurado. Você pode iniciar os containers Docker, executar migrações e semear o banco de dados com apenas um comando:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+make install
+
+## 🚀 Instalando o Desafio sem make
+
+Para instalar o desafio, siga estas etapas:
+
+1. Clone o repositório:
+
+    ```bash
+    git clone https://github.com/ValentinAlmeida/desafio-horizon.git
+    ```
+
+2. Acesse o diretório do projeto:
+
+    ```bash
+    cd desafio-horizon
+    ```
+
+3. Faça a instalação do composer:
+
+    ```bash
+    composer install
+    ```
+
+4.1. Crie o .env: (Linux)
+
+    ```bash
+    cp .env.example .env
+    ```
+
+4.2. Crie o .env: (Windows)
+
+     ```bash
+    copy .env.example .env
+    ```   
+
+5. Gere a key do artisan:
+
+     ```bash
+    php artisan key:generate
+    ```    
+
+6. Inicie o Docker:
+
+     ```bash
+    docker-compose up --build
+    ```    
+
+7. Rode a migrate:
+
+     ```bash
+    docker-compose exec app php artisan migrate
+    ```   
+
+8. Rode a Seed:
+
+     ```bash
+    docker-compose exec app php artisan db:seed
+    ```   
+
+### Contribuidor
+| [<img src="https://avatars.githubusercontent.com/u/85695651?s=400&u=d9da951fa99581e5dfbd44e3fb4f847451efcfbb&v=4"><br><sub>Valentin Almeida</sub>](https://github.com/ValentinAlmeida) |:-:|

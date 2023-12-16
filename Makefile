@@ -11,7 +11,7 @@ help:
 
 setup:
 	composer install
-	cp .env.example .env
+	$(if $(filter Windows%,$(OS)),copy .env.example .env, cp .env.example .env)
 	php artisan key:generate
 
 up:
@@ -28,5 +28,8 @@ seed:
 
 test:
 	docker-compose exec app php artisan test
+
+install: setup up migrate seed
+	@echo "Project installed and ready to use."
 
 .DEFAULT_GOAL := help
