@@ -153,7 +153,7 @@ Para instalar o desafio, siga estas etapas:
     }
 ```
 
-    Url: http://localhost:8000/api/v1/surfistas 
+    Url: http://localhost:8000/api/surfistas 
         Metodo: Post
 
 2. Bateria:
@@ -180,7 +180,7 @@ Para instalar o desafio, siga estas etapas:
     }
 ```
 
-    Url: http://localhost:8000/api/v1/baterias 
+    Url: http://localhost:8000/api/baterias 
         Metodo: Post
 
 3. Ondas:
@@ -227,7 +227,7 @@ Para instalar o desafio, siga estas etapas:
     }
 ```
 
-    Url: http://localhost:8000/api/v1/ondas 
+    Url: http://localhost:8000/api/ondas 
         Metodo: Post
 
 4. Notas:
@@ -291,7 +291,7 @@ Para instalar o desafio, siga estas etapas:
     }
 ```
 
-    Url: http://localhost:8000/api/v1/notas 
+    Url: http://localhost:8000/api/notas 
         Metodo: Post
 
-Url para obter o vencedor http://localhost:8000/api/v1/baterias/{id}/vencedor
+Url para obter o vencedor http://localhost:8000/api/baterias/{id}/vencedor

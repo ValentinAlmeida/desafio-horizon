@@ -1,4 +1,4 @@
-.PHONY: help setup up down migrate seed test
+.PHONY: help setup up down migrate seed reset-db test
 
 help:
 	@echo "Available targets:"
@@ -7,6 +7,7 @@ help:
 	@echo "  make down      - Stop and remove Docker containers"
 	@echo "  make migrate   - Run database migrations"
 	@echo "  make seed      - Seed the database with sample data"
+	@echo "  make reset-db  - Reset the database (drop and recreate)"
 	@echo "  make test      - Run tests"
 
 setup:
@@ -25,6 +26,9 @@ migrate:
 
 seed:
 	docker-compose exec app php artisan db:seed
+
+reset-db:
+	docker-compose exec app php artisan migrate:refresh --seed
 
 test:
 	docker-compose exec app php artisan test
