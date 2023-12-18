@@ -25,7 +25,14 @@ Route::resources([
     'notas' => NotaController::class,
 ]);
 
-Route::get('baterias/{bateria}/vencedor', [BateriaController::class, 'getVencedor']);
+Route::prefix('baterias')->group(function () {
+    Route::get('{bateria}/vencedor', [BateriaController::class, 'getVencedor']);
+    Route::post('{bateria}/restore', [BateriaController::class, 'restorePost']);
+});
+
+Route::post('ondas/{onda}/restore', [OndaController::class, 'restorePost']);
+Route::post('surfistas/{surfista}/restore', [SurfistaController::class, 'restorePost']);
+Route::post('notas/{nota}/restore', [NotaController::class, 'restorePost']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

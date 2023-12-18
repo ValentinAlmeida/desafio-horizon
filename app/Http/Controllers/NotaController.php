@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NotaValidateRequest;
 use App\Models\Nota;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Controlador para gerenciar operações relacionadas às notas.
@@ -13,9 +15,9 @@ class NotaController extends Controller
     /**
      * Retorna todas as notas.
      *
-     * @return \Illuminate\Database\Eloquent\Collection|\App\Models\Nota[]
+     * @return Collection|Nota[]
      */
-    public function index()
+    public function index(): Collection
     {
         return Nota::all();
     }
@@ -23,10 +25,10 @@ class NotaController extends Controller
     /**
      * Armazena uma nova nota.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \App\Models\Nota
+     * @param  NotaValidateRequest  $request
+     * @return Nota
      */
-    public function store(Request $request)
+    public function store(NotaValidateRequest $request): Nota
     {
         return Nota::create($request->all());
     }
@@ -34,10 +36,10 @@ class NotaController extends Controller
     /**
      * Exibe os detalhes de uma nota específica.
      *
-     * @param  \App\Models\Nota  $nota
-     * @return \App\Models\Nota
+     * @param  Nota  $nota
+     * @return Nota
      */
-    public function show(Nota $nota)
+    public function show(Nota $nota): Nota
     {
         return $nota;
     }
@@ -45,11 +47,11 @@ class NotaController extends Controller
     /**
      * Atualiza os detalhes de uma nota existente.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Nota  $nota
-     * @return \App\Models\Nota
+     * @param  NotaValidateRequest  $request
+     * @param  Nota  $nota
+     * @return Nota
      */
-    public function update(Request $request, Nota $nota)
+    public function update(NotaValidateRequest $request, Nota $nota): Nota
     {
         $nota->update($request->all());
 
@@ -59,13 +61,34 @@ class NotaController extends Controller
     /**
      * Exclui uma nota específica.
      *
-     * @param  \App\Models\Nota  $nota
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Nota  $nota
+     * @return JsonResponse
      */
-    public function destroy(Nota $nota)
+    public function destroy(Nota $nota): JsonResponse
     {
         $nota->delete();
 
-        return response()->json(['message' => 'Deletado'], 204);
+        return response()->json(['message' => 'Nota deletada'], 200);
+    }
+
+    /**
+     * Restaura uma nota previamente excluída.
+     *
+     * @param int $notaId
+     * @return JsonResponse
+     */
+    public function restorePost($notaId): JsonResponse
+    {
+        $notaId = Nota::withTrashed()->find($notaId);
+
+        if (!$notaId) {
+            return response()->json(['message' => 'Nota não encontrada'], 404);
+        }
+
+        if ($notaId->restore()) {
+            return response()->json(['message' => 'Nota restaurada'], 200);
+        }
+
+        return response()->json(['message' => 'Não foi possível restaurar a nota'], 500);
     }
 }
