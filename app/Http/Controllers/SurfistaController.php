@@ -3,92 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SurfistaValidateRequest;
-use App\Models\Surfista;
+use App\Services\SurfistaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
 
-/**
- * Controlador para gerenciar operações relacionadas aos surfistas.
- */
 class SurfistaController extends Controller
 {
-    /**
-     * Retorna todos os surfistas.
-     *
-     * @return Collection|Surfista[]
-     */
+    protected $surfistaService;
+
+    public function __construct(SurfistaService $surfistaService)
+    {
+        $this->surfistaService = $surfistaService;
+    }
+
     public function index(): Collection
     {
-        return Surfista::all();
+        return $this->surfistaService->getAllSurfistas();
     }
 
-    /**
-     * Armazena um novo surfista.
-     *
-     * @param SurfistaValidateRequest $request
-     * @return Surfista
-     */
-    public function store(SurfistaValidateRequest $request): Surfista
+    public function store(SurfistaValidateRequest $request): JsonResponse
     {
-        return Surfista::create($request->all());
+        $surfista = $this->surfistaService->createSurfista($request->all());
+
+        return response()->json($surfista, 201);
     }
 
-    /**
-     * Exibe os detalhes de um surfista específico.
-     *
-     * @param Surfista $surfista
-     * @return Surfista
-     */
-    public function show(Surfista $surfista): Surfista
+    public function show(int $id): JsonResponse
     {
-        return $surfista;
-    }
-
-    /**
-     * Atualiza os detalhes de um surfista existente.
-     *
-     * @param SurfistaValidateRequest $request
-     * @param Surfista $surfista
-     * @return Surfista
-     */
-    public function update(SurfistaValidateRequest $request, Surfista $surfista): Surfista
-    {
-        $surfista->update($request->all());
-
-        return $surfista;
-    }
-
-    /**
-     * Exclui um surfista específico.
-     *
-     * @param Surfista $surfista
-     * @return JsonResponse
-     */
-    public function destroy(Surfista $surfista): JsonResponse
-    {
-        $surfista->delete();
-
-        return response()->json(['message' => 'Surfista deletado'], 200);
-    }
-
-    /**
-     * Restaura um surfista previamente excluído.
-     *
-     * @param int $surfistaId
-     * @return JsonResponse
-     */
-    public function restorePost($surfistaId): JsonResponse
-    {
-        $surfista = Surfista::withTrashed()->find($surfistaId);
+        $surfista = $this->surfistaService->getSurfistaById($id);
 
         if (!$surfista) {
             return response()->json(['message' => 'Surfista não encontrado'], 404);
         }
 
-        if ($surfista->restore()) {
-            return response()->json(['message' => 'Surfista restaurado'], 200);
-        }
+        return response()->json($surfista);
+    }
 
-        return response()->json(['message' => 'Não foi possível restaurar o Surfista'], 500);
+    public function update(SurfistaValidateRequest $request, int $id): JsonResponse
+    {
+        $surfista = $this->surfistaService->updateSurfista($id, $request->all());
+
+        return response()->json($surfista);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        return $this->surfistaService->deleteSurfista($id);
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        return $this->surfistaService->restoreSurfista($id);
     }
 }

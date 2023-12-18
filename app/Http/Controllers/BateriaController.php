@@ -3,104 +3,110 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BateriaValidateRequest;
-use App\Models\Bateria;
+use App\Services\BateriaService;
 use App\Models\Surfista;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
 
-/**
- * Controlador para gerenciar operações relacionadas às baterias de surf.
- */
 class BateriaController extends Controller
 {
+    protected $bateriaService;
+
+    public function __construct(BateriaService $bateriaService)
+    {
+        $this->bateriaService = $bateriaService;
+    }
+
     /**
      * Retorna todas as baterias.
      *
-     * @return Collection|Bateria[]
+     * @return Collection
      */
     public function index(): Collection
     {
-        return Bateria::all();
+        return $baterias = $this->bateriaService->getAllBaterias();
     }
 
     /**
      * Armazena uma nova bateria.
      *
      * @param BateriaValidateRequest $request
-     * @return Bateria
+     * @return BateriaResource
      */
-    public function store(BateriaValidateRequest $request): Bateria
+    public function store(BateriaValidateRequest $request): JsonResponse
     {
-        return Bateria::create($request->all());
+        $bateria = $this->bateriaService->createBateria($request->all());
+
+        return response()->json($bateria, 201);
     }
 
     /**
      * Exibe os detalhes de uma bateria específica.
      *
-     * @param Bateria $bateria
-     * @return Bateria
+     * @param int $id
+     * @return BateriaResource|JsonResponse
      */
-    public function show(Bateria $bateria): Bateria
+    public function show(int $id)
     {
-        return $bateria;
+        $bateria = $this->bateriaService->getBateriaById($id);
+
+        if (!$bateria) {
+            return response()->json(['message' => 'Nota não encontrada'], 404);
+        }
+
+        return response()->json($bateria);
     }
 
     /**
      * Atualiza os detalhes de uma bateria existente.
      *
      * @param BateriaValidateRequest $request
-     * @param Bateria $bateria
-     * @return Bateria
+     * @param int $id
+     * @return BateriaResource|JsonResponse
      */
-    public function update(BateriaValidateRequest $request, Bateria $bateria): Bateria
+    public function update(BateriaValidateRequest $request, int $id)
     {
-        $bateria->update($request->all());
+        $bateria = $this->bateriaService->updateBateria($id, $request->all());
 
-        return $bateria;
+        return response()->json($bateria);
     }
 
     /**
      * Exclui uma bateria específica.
      *
-     * @param Bateria $bateria
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Bateria $bateria): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $bateria->delete();
-
-        return response()->json(['message' => 'Bateria deletada'], 200);
+        return $this->bateriaService->deleteBateria($id);
     }
 
     /**
      * Restaura uma bateria previamente excluída.
      *
-     * @param int $bateriaId
+     * @param int $id
      * @return JsonResponse
      */
-    public function restorePost($bateriaId): JsonResponse
+    public function restore(int $id): JsonResponse
     {
-        $bateriaId = Bateria::withTrashed()->find($bateriaId);
-
-        if (!$bateriaId) {
-            return response()->json(['message' => 'Bateria não encontrada'], 404);
-        }
-
-        if ($bateriaId->restore()) {
-            return response()->json(['message' => 'Bateria restaurada'], 200);
-        }
-
-        return response()->json(['message' => 'Não foi possível restaurar a Bateria'], 500);
+        return $this->bateriaService->restoreBateria($id);
     }
 
     /**
      * Obtém o surfista vencedor com base nas pontuações das ondas.
      *
-     * @param Bateria $bateria
-     * @return Surfista|string Retorna o surfista vencedor ou "Empate".
+     * @param int $id
+     * @return BateriaResource|JsonResponse
      */
-    public function getVencedor(Bateria $bateria): Surfista|string
+    public function getVencedor(int $id): JsonResponse
     {
+        $bateria = $this->bateriaService->getBateriaById($id);
+
+        if (!$bateria) {
+            return response()->json(['message' => 'Bateria não encontrada'], 404);
+        }
+
         $surfista1 = Surfista::find($bateria->surfista1);
         $surfista2 = Surfista::find($bateria->surfista2);
 
@@ -108,13 +114,13 @@ class BateriaController extends Controller
         $pontuacaoSurfista2 = $this->calcularPontuacao($surfista2->numero, $bateria->ondas);
 
         if ($pontuacaoSurfista1 > $pontuacaoSurfista2) {
-            return $surfista1;
+            return response()->json($surfista1);
         }
         if ($pontuacaoSurfista2 > $pontuacaoSurfista1) {
-            return $surfista2;
+            return response()->json($surfista2);
         }
 
-        return "Empate";
+        return response()->json(['message' => 'Empate'], 200);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OndaValidateRequest;
-use App\Models\Onda;
+use App\Services\OndaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -13,82 +13,95 @@ use Illuminate\Database\Eloquent\Collection;
 class OndaController extends Controller
 {
     /**
+     * Serviço para manipulação de ondas.
+     *
+     * @var OndaService
+     */
+    protected $ondaService;
+
+    /**
+     * Construtor do controlador.
+     *
+     * @param OndaService $ondaService
+     */
+    public function __construct(OndaService $ondaService)
+    {
+        $this->ondaService = $ondaService;
+    }
+
+    /**
      * Retorna todas as ondas.
      *
-     * @return Collection|Onda[]
+     * @return Collection
      */
     public function index(): Collection
     {
-        return Onda::all();
+        return $this->ondaService->getAllOndas();
     }
 
     /**
      * Armazena uma nova onda.
      *
      * @param OndaValidateRequest $request
-     * @return Onda
+     * @return JsonResponse
      */
-    public function store(OndaValidateRequest $request): Onda
+    public function store(OndaValidateRequest $request): JsonResponse
     {
-        return Onda::create($request->all());
+        $onda = $this->ondaService->createOnda($request->all());
+
+        return response()->json($onda, 201);
     }
 
     /**
      * Exibe os detalhes de uma onda específica.
      *
-     * @param Onda $onda
-     * @return Onda
+     * @param int $id
+     * @return JsonResponse
      */
-    public function show(Onda $onda): Onda
+    public function show(int $id): JsonResponse
     {
-        return $onda;
+        $onda = $this->ondaService->getOndaById($id);
+
+        if (!$onda) {
+            return response()->json(['message' => 'Onda não encontrada'], 404);
+        }
+
+        return response()->json($onda);
     }
 
     /**
      * Atualiza os detalhes de uma onda existente.
      *
      * @param OndaValidateRequest $request
-     * @param Onda $onda
-     * @return Onda
+     * @param int $id
+     * @return JsonResponse
      */
-    public function update(OndaValidateRequest $request, Onda $onda): Onda
+    public function update(OndaValidateRequest $request, int $id): JsonResponse
     {
-        $onda->update($request->all());
+        $onda = $this->ondaService->updateOnda($id, $request->all());
 
-        return $onda;
+        return response()->json($onda);
     }
 
     /**
      * Exclui uma onda específica.
      *
-     * @param Onda $onda
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Onda $onda): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        $onda->delete();
-
-        return response()->json(['message' => 'Onda deletada'], 200);
+        return $this->ondaService->deleteOnda($id);
     }
 
     /**
-     * Restaura uma onda previamente excluído.
+     * Restaura uma onda previamente excluída.
      *
-     * @param int $ondaId
+     * @param int $id
      * @return JsonResponse
      */
-    public function restorePost($ondaId): JsonResponse
+    public function restore(int $id): JsonResponse
     {
-        $onda = Onda::withTrashed()->find($ondaId);
-
-        if (!$onda) {
-            return response()->json(['message' => 'Onda não encontrada'], 404);
-        }
-
-        if ($onda->restore()) {
-            return response()->json(['message' => 'Onda restaurada'], 200);
-        }
-
-        return response()->json(['message' => 'Não foi possível restaurar a Onda'], 500);
+        return $this->ondaService->restoreOnda($id);
     }
 }
