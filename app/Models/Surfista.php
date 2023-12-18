@@ -4,13 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Modelo para representar um surfista.
+ *
+ * @property int $numero
+ * @property string $nome
+ * @property string $pais
  */
 class Surfista extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * Nome da chave primária da tabela.
@@ -54,9 +61,9 @@ class Surfista extends Model
     /**
      * Obtém a coleção de objetos relacionados às baterias associadas a este surfista.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function baterias()
+    public function baterias(): HasMany
     {
         return $this->hasMany(Bateria::class, 'surfista1', 'numero')
                     ->orWhere('surfista2', $this->numero);
@@ -65,9 +72,9 @@ class Surfista extends Model
     /**
      * Obtém a coleção de objetos relacionados às ondas associadas a este surfista.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function ondas()
+    public function ondas(): HasMany
     {
         return $this->hasMany(Onda::class, 'surfista_id', 'numero');
     }

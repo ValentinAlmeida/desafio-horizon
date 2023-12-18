@@ -25,6 +25,7 @@ class CreateSurfistasTable extends Migration
             
             // Timestamps para rastrear a criação e atualização do registro.
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

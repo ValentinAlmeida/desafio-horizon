@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BateriaValidateRequest;
 use App\Models\Bateria;
-use Illuminate\Http\Request;
 use App\Models\Surfista;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Controlador para gerenciar operações relacionadas às baterias de surf.
@@ -14,9 +16,9 @@ class BateriaController extends Controller
     /**
      * Retorna todas as baterias.
      *
-     * @return \Illuminate\Database\Eloquent\Collection|\App\Models\Bateria[]
+     * @return Collection|Bateria[]
      */
-    public function index()
+    public function index(): Collection
     {
         return Bateria::all();
     }
@@ -24,10 +26,10 @@ class BateriaController extends Controller
     /**
      * Armazena uma nova bateria.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \App\Models\Bateria
+     * @param BateriaValidateRequest $request
+     * @return Bateria
      */
-    public function store(Request $request)
+    public function store(BateriaValidateRequest $request): Bateria
     {
         return Bateria::create($request->all());
     }
@@ -35,10 +37,10 @@ class BateriaController extends Controller
     /**
      * Exibe os detalhes de uma bateria específica.
      *
-     * @param  \App\Models\Bateria  $bateria
-     * @return \App\Models\Bateria
+     * @param Bateria $bateria
+     * @return Bateria
      */
-    public function show(Bateria $bateria)
+    public function show(Bateria $bateria): Bateria
     {
         return $bateria;
     }
@@ -46,11 +48,11 @@ class BateriaController extends Controller
     /**
      * Atualiza os detalhes de uma bateria existente.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Bateria  $bateria
-     * @return \App\Models\Bateria
+     * @param BateriaValidateRequest $request
+     * @param Bateria $bateria
+     * @return Bateria
      */
-    public function update(Request $request, Bateria $bateria)
+    public function update(BateriaValidateRequest $request, Bateria $bateria): Bateria
     {
         $bateria->update($request->all());
 
@@ -60,47 +62,69 @@ class BateriaController extends Controller
     /**
      * Exclui uma bateria específica.
      *
-     * @param  \App\Models\Bateria  $bateria
-     * @return \Illuminate\Http\JsonResponse
+     * @param Bateria $bateria
+     * @return JsonResponse
      */
-    public function destroy(Bateria $bateria)
+    public function destroy(Bateria $bateria): JsonResponse
     {
         $bateria->delete();
 
-        return response()->json(['message' => 'Deletado'], 204);
+        return response()->json(['message' => 'Bateria deletada'], 200);
+    }
+
+    /**
+     * Restaura uma bateria previamente excluída.
+     *
+     * @param int $bateriaId
+     * @return JsonResponse
+     */
+    public function restorePost($bateriaId): JsonResponse
+    {
+        $bateriaId = Bateria::withTrashed()->find($bateriaId);
+
+        if (!$bateriaId) {
+            return response()->json(['message' => 'Bateria não encontrada'], 404);
+        }
+
+        if ($bateriaId->restore()) {
+            return response()->json(['message' => 'Bateria restaurada'], 200);
+        }
+
+        return response()->json(['message' => 'Não foi possível restaurar a Bateria'], 500);
     }
 
     /**
      * Obtém o surfista vencedor com base nas pontuações das ondas.
      *
-     * @param  \App\Models\Bateria  $bateria
-     * @return \App\Models\Surfista|string  Retorna o surfista vencedor ou "Empate".
+     * @param Bateria $bateria
+     * @return Surfista|string Retorna o surfista vencedor ou "Empate".
      */
-    public function getVencedor(Bateria $bateria)
+    public function getVencedor(Bateria $bateria): Surfista|string
     {
         $surfista1 = Surfista::find($bateria->surfista1);
         $surfista2 = Surfista::find($bateria->surfista2);
-    
+
         $pontuacaoSurfista1 = $this->calcularPontuacao($surfista1->numero, $bateria->ondas);
         $pontuacaoSurfista2 = $this->calcularPontuacao($surfista2->numero, $bateria->ondas);
-    
+
         if ($pontuacaoSurfista1 > $pontuacaoSurfista2) {
             return $surfista1;
-        } elseif ($pontuacaoSurfista2 > $pontuacaoSurfista1) {
-            return $surfista2;
-        } else {
-            return "Empate";
         }
+        if ($pontuacaoSurfista2 > $pontuacaoSurfista1) {
+            return $surfista2;
+        }
+
+        return "Empate";
     }
-    
+
     /**
      * Calcula a pontuação total de um surfista com base nas ondas.
      *
-     * @param  int  $surfistaId
-     * @param  \Illuminate\Database\Eloquent\Collection  $ondas
+     * @param int $surfistaId
+     * @param Collection $ondas
      * @return float
      */
-    private function calcularPontuacao($surfistaId, $ondas)
+    private function calcularPontuacao(int $surfistaId, Collection $ondas): float
     {
         $pontuacao = 0;
 
@@ -112,5 +136,5 @@ class BateriaController extends Controller
             }
         }
         return $pontuacao;
-    } 
+    }
 }
