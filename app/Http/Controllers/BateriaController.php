@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BateriaValidateRequest;
 use App\Models\Bateria;
 use App\Models\Surfista;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Controlador para gerenciar operações relacionadas às baterias de surf.
@@ -26,12 +27,23 @@ class BateriaController extends Controller
     /**
      * Armazena uma nova bateria.
      *
-     * @param BateriaValidateRequest $request
-     * @return Bateria
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(BateriaValidateRequest $request): Bateria
+    public function store(Request $request): JsonResponse
     {
-        return Bateria::create($request->all());
+        $validator = Validator::make($request->all(), [
+            'surfista1' => 'required|exists:surfistas,numero',
+            'surfista2' => 'required|exists:surfistas,numero|different:surfista1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $bateria = Bateria::create($request->all());
+
+        return response()->json(['message' => 'Bateria criada com sucesso', 'data' => $bateria], 201);
     }
 
     /**
@@ -48,15 +60,24 @@ class BateriaController extends Controller
     /**
      * Atualiza os detalhes de uma bateria existente.
      *
-     * @param BateriaValidateRequest $request
+     * @param Request $request
      * @param Bateria $bateria
-     * @return Bateria
+     * @return JsonResponse
      */
-    public function update(BateriaValidateRequest $request, Bateria $bateria): Bateria
+    public function update(Request $request, Bateria $bateria): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'surfista1' => 'required|exists:surfistas,numero',
+            'surfista2' => 'required|exists:surfistas,numero|different:surfista1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $bateria->update($request->all());
 
-        return $bateria;
+        return response()->json(['message' => 'Bateria atualizada com sucesso', 'data' => $bateria], 200);
     }
 
     /**
