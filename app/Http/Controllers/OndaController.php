@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OndaValidateRequest;
-use App\Services\OndaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Services\OndaService;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -32,24 +33,35 @@ class OndaController extends Controller
     /**
      * Retorna todas as ondas.
      *
-     * @return Collection
+     * @return JsonResponse
      */
-    public function index(): Collection
+    public function index(): JsonResponse
     {
-        return $this->ondaService->getAllOndas();
+        $ondas = $this->ondaService->getAllOndas();
+
+        return response()->json($ondas);
     }
 
     /**
      * Armazena uma nova onda.
      *
-     * @param OndaValidateRequest $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function store(OndaValidateRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'bateria_id' => 'required|exists:baterias,id',
+            'surfista_id' => 'required|exists:surfistas,numero',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $onda = $this->ondaService->createOnda($request->all());
 
-        return response()->json($onda, 201);
+        return response()->json(['message' => 'Onda criada com sucesso', 'data' => $onda], 201);
     }
 
     /**
@@ -72,15 +84,24 @@ class OndaController extends Controller
     /**
      * Atualiza os detalhes de uma onda existente.
      *
-     * @param OndaValidateRequest $request
+     * @param Request $request
      * @param int $id
      * @return JsonResponse
      */
-    public function update(OndaValidateRequest $request, int $id): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'bateria_id' => 'required|exists:baterias,id',
+            'surfista_id' => 'required|exists:surfistas,numero',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $onda = $this->ondaService->updateOnda($id, $request->all());
 
-        return response()->json($onda);
+        return response()->json(['message' => 'Onda atualizada com sucesso', 'data' => $onda]);
     }
 
     /**
@@ -91,7 +112,9 @@ class OndaController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->ondaService->deleteOnda($id);
+        $response = $this->ondaService->deleteOnda($id);
+
+        return response()->json($response);
     }
 
     /**
@@ -102,6 +125,8 @@ class OndaController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        return $this->ondaService->restoreOnda($id);
+        $response = $this->ondaService->restoreOnda($id);
+
+        return response()->json($response);
     }
 }

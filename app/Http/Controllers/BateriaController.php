@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BateriaValidateRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Services\BateriaService;
 use App\Models\Surfista;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Controlador para gerenciar operações relacionadas às baterias.
+ */
 class BateriaController extends Controller
 {
     protected $bateriaService;
@@ -20,38 +24,49 @@ class BateriaController extends Controller
     /**
      * Retorna todas as baterias.
      *
-     * @return Collection
+     * @return JsonResponse
      */
-    public function index(): Collection
+    public function index(): JsonResponse
     {
-        return $baterias = $this->bateriaService->getAllBaterias();
+        $baterias = $this->bateriaService->getAllBaterias();
+
+        return response()->json($baterias);
     }
 
     /**
      * Armazena uma nova bateria.
      *
-     * @param BateriaValidateRequest $request
-     * @return BateriaResource
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(BateriaValidateRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'surfista1' => 'required|exists:surfistas,numero',
+            'surfista2' => 'required|exists:surfistas,numero|different:surfista1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $bateria = $this->bateriaService->createBateria($request->all());
 
-        return response()->json($bateria, 201);
+        return response()->json(['message' => 'Bateria criada com sucesso', 'data' => $bateria], 201);
     }
 
     /**
      * Exibe os detalhes de uma bateria específica.
      *
      * @param int $id
-     * @return BateriaResource|JsonResponse
+     * @return JsonResponse
      */
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
         $bateria = $this->bateriaService->getBateriaById($id);
 
         if (!$bateria) {
-            return response()->json(['message' => 'Nota não encontrada'], 404);
+            return response()->json(['message' => 'Bateria não encontrada'], 404);
         }
 
         return response()->json($bateria);
@@ -60,15 +75,24 @@ class BateriaController extends Controller
     /**
      * Atualiza os detalhes de uma bateria existente.
      *
-     * @param BateriaValidateRequest $request
+     * @param Request $request
      * @param int $id
-     * @return BateriaResource|JsonResponse
+     * @return JsonResponse
      */
-    public function update(BateriaValidateRequest $request, int $id)
+    public function update(Request $request, int $id): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'surfista1' => 'required|exists:surfistas,numero',
+            'surfista2' => 'required|exists:surfistas,numero|different:surfista1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $bateria = $this->bateriaService->updateBateria($id, $request->all());
 
-        return response()->json($bateria);
+        return response()->json(['message' => 'Bateria atualizada com sucesso', 'data' => $bateria]);
     }
 
     /**
@@ -79,7 +103,9 @@ class BateriaController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->bateriaService->deleteBateria($id);
+        $response = $this->bateriaService->deleteBateria($id);
+
+        return response()->json($response);
     }
 
     /**
@@ -90,14 +116,16 @@ class BateriaController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        return $this->bateriaService->restoreBateria($id);
+        $response = $this->bateriaService->restoreBateria($id);
+
+        return response()->json($response);
     }
 
     /**
      * Obtém o surfista vencedor com base nas pontuações das ondas.
      *
      * @param int $id
-     * @return BateriaResource|JsonResponse
+     * @return JsonResponse
      */
     public function getVencedor(int $id): JsonResponse
     {
@@ -141,6 +169,7 @@ class BateriaController extends Controller
                 $pontuacao += $mediaNota;
             }
         }
+
         return $pontuacao;
     }
 }

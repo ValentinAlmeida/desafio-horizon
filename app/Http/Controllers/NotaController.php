@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\NotaValidateRequest;
-use App\Services\NotaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Services\NotaService;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -32,24 +33,37 @@ class NotaController extends Controller
     /**
      * Retorna todas as notas.
      *
-     * @return Collection
+     * @return JsonResponse
      */
-    public function index(): Collection
+    public function index(): JsonResponse
     {
-        return $this->notaService->getAllNotas();
+        $notas = $this->notaService->getAllNotas();
+
+        return response()->json($notas);
     }
 
     /**
      * Armazena uma nova nota.
      *
-     * @param NotaValidateRequest $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function store(NotaValidateRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'onda_id' => 'required|exists:ondas,id',
+            'notaParcial1' => 'required|numeric|min:0|max:10',
+            'notaParcial2' => 'required|numeric|min:0|max:10',
+            'notaParcial3' => 'required|numeric|min:0|max:10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $nota = $this->notaService->createNota($request->all());
 
-        return response()->json($nota, 201);
+        return response()->json(['message' => 'Nota criada com sucesso', 'data' => $nota], 201);
     }
 
     /**
@@ -72,15 +86,26 @@ class NotaController extends Controller
     /**
      * Atualiza os detalhes de uma nota existente.
      *
-     * @param NotaValidateRequest $request
+     * @param Request $request
      * @param int $id
      * @return JsonResponse
      */
-    public function update(NotaValidateRequest $request, int $id): JsonResponse
+    public function update(Request $request, int $id): JsonResponse
     {
+        $validator = Validator::make($request->all(), [
+            'onda_id' => 'required|exists:ondas,id',
+            'notaParcial1' => 'required|numeric|min:0|max:10',
+            'notaParcial2' => 'required|numeric|min:0|max:10',
+            'notaParcial3' => 'required|numeric|min:0|max:10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         $nota = $this->notaService->updateNota($id, $request->all());
 
-        return response()->json($nota);
+        return response()->json(['message' => 'Nota atualizada com sucesso', 'data' => $nota]);
     }
 
     /**
@@ -91,7 +116,9 @@ class NotaController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        return $this->notaService->deleteNota($id);
+        $response = $this->notaService->deleteNota($id);
+
+        return response()->json($response);
     }
 
     /**
@@ -102,6 +129,8 @@ class NotaController extends Controller
      */
     public function restore(int $id): JsonResponse
     {
-        return $this->notaService->restoreNota($id);
+        $response = $this->notaService->restoreNota($id);
+
+        return response()->json($response);
     }
 }
