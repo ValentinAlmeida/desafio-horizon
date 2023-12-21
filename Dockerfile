@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.1-fpm
 
 WORKDIR /var/www/html
 
@@ -16,10 +16,7 @@ RUN apt-get update \
 # Instala o Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copia os arquivos do projeto
-COPY . .
-
-# Instala as dependências do Composer
-RUN composer install
+# Instala o Laravel 10
+RUN composer create-project --prefer-dist laravel/laravel:^10 .
 
 CMD php artisan serve --host=0.0.0.0 --port=8000

@@ -16,8 +16,8 @@
 
 Antes de começar, verifique se você atendeu algumas informações do projeto:
 
-* Laravel Framework 9.52.16
-* PHP 8.0.30 (cli)
+* Laravel Framework v10.38.1
+* PHP v8.1.26
 * Composer version 2.6.6
 * Docker version 24.0.7
 * Docker Compose version v2.23.3
